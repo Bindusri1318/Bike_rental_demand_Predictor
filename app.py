@@ -24,12 +24,37 @@ st.markdown("### 🚴 Predict bike demand using weather conditions")
 # Load dataset
 data = pd.read_csv("day.csv")
 
+# -------------------------------
+# 🧹 DATA CLEANING
+# -------------------------------
+
+# Remove duplicates
+data = data.drop_duplicates()
+
+# Handle missing values
+data = data.dropna()
+
+# Optional: Reset index
+data = data.reset_index(drop=True)
+
+st.success("✅ Data cleaned successfully")
+
+st.write("🔍 Missing values in each column:")
+st.write(data.isnull().sum())
+
 # Show dataset
 col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("📂 Dataset Preview")
     st.dataframe(data.head())
+
+    st.download_button(
+        label="📥 Download Dataset",
+        data=data.to_csv(index=False),
+        file_name="bike_data.csv",
+        mime="text/csv"
+    )
 
 # Train model
 X = data[['temp', 'hum', 'windspeed']]
@@ -44,6 +69,8 @@ st.sidebar.header("🌦️ Enter Weather Conditions")
 temp = st.sidebar.slider("🌡️ Temperature", 0.0, 1.0, 0.3)
 hum = st.sidebar.slider("💧 Humidity", 0.0, 1.0, 0.5)
 windspeed = st.sidebar.slider("🌬️ Wind Speed", 0.0, 1.0, 0.2)
+
+season = st.sidebar.selectbox("🌸 Select Season", ["Spring", "Summer", "Fall", "Winter"])
 
 # Prediction
 with col2:
